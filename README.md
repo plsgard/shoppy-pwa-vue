@@ -1,6 +1,6 @@
-# shoppy-pwa-vue
+# shoppy
 
-> Shoppy's PWA with VueJS
+> Shoppy PWA with VueJS
 
 ## Build Setup
 
