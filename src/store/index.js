@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import itemsModule from './modules/items'
+import listsModule from './modules/lists'
 import apiService from '@/api/api.service.js'
 
 Vue.use(Vuex)
@@ -8,22 +9,19 @@ Vue.use(Vuex)
 const debug = process.env.NODE_ENV !== 'production'
 
 const state = {
-  isAuthenticated: false,
-  title: 'Shoppy'
+  isAuthenticated: true
 }
 
 const store = new Vuex.Store({
   modules: {
-    itemsModule
+    itemsModule,
+    listsModule
   },
   strict: debug,
   state,
   getters: {
     isAuthenticated: (state) => {
       return state.isAuthenticated
-    },
-    title: (state) => {
-      return state.title
     }
   },
   actions: {

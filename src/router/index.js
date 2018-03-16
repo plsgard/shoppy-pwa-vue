@@ -19,12 +19,13 @@ const router = new Router({
     },
     {
       path: '/lists/:id',
-      name: 'lists',
+      name: 'List',
       component: List,
       meta: { requiresAuth: true }
     },
     {
       path: '/lists/new',
+      name: 'NewList',
       component: NewList,
       meta: { requiresAuth: true }
     },

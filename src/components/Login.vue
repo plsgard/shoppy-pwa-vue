@@ -11,13 +11,14 @@
               Hello !
             </v-card-text>
             <v-card-text v-else>
-              <v-form v-model="valid" ref="form" lazy-validation>
+              <v-form v-model="valid" v-on:submit.prevent ref="form" lazy-validation>
                 <v-text-field
                   prepend-icon="person"
                   label="E-mail"
-                  v-model="username"
+                  v-model.lazy="username"
                   :rules="emailRules"
                   required
+                  @keyup.enter="login"
                 ></v-text-field>
                 <v-text-field
                   prepend-icon="lock"
@@ -28,6 +29,7 @@
                   :append-icon-cb="() => (passwordHint = !passwordHint)"
                   :type="!passwordHint ? 'password' : 'text'"
                   required
+                  @keyup.enter="login"
                 ></v-text-field>
               </v-form>
             </v-card-text>
@@ -41,7 +43,7 @@
             <v-card-actions v-else>
               <v-spacer></v-spacer>
               <v-btn color="primary"
-                  @click="login"
+                  @click.prevent="login"
                   :disabled="!valid"
                 >
                   login
@@ -61,7 +63,7 @@
       logout: 'logout'
     }),
     data: () => ({
-      valid: true,
+      valid: false,
       username: '',
       emailRules: [
         v => !!v || 'E-mail is required',
@@ -75,12 +77,14 @@
     },
     methods: {
       login () {
-        this.$store.dispatch('login', {username: this.username, password: this.password})
-          .then(() => {
-            this.username = ''
-            this.password = ''
-            this.$router.push('/')
-          })
+        if (this.$refs.form.validate()) {
+          this.$store.dispatch('login', {username: this.username, password: this.password})
+            .then(() => {
+              this.username = ''
+              this.password = ''
+              this.$router.push('/')
+            })
+        }
       },
       logout () {
         this.$store.dispatch('logout')
