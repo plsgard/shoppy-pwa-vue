@@ -18,7 +18,7 @@
         <v-flex xs12 sm6 offset-sm3>
           <v-card>
             <v-card-text>
-              <v-form v-model="valid" ref="form" lazy-validation>
+              <v-form v-model="valid" v-on:submit.prevent ref="form" lazy-validation>
                 <v-text-field
                   label="Define a name for your list"
                   v-model.lazy.trim="name"

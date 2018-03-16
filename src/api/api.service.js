@@ -68,6 +68,26 @@ const appService = {
           reject(response.status)
         })
     })
+  },
+  deleteList (listId) {
+    return new Promise((resolve, reject) => {
+      axios.delete(`/lists/${listId}`)
+        .then(() => {
+          resolve()
+        }).catch(response => {
+          reject(response.status)
+        })
+    })
+  },
+  renameList (list) {
+    return new Promise((resolve, reject) => {
+      axios.patch('/lists', list)
+        .then(() => {
+          resolve()
+        }).catch(response => {
+          reject(response.status)
+        })
+    })
   }
 }
 

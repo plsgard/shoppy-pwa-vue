@@ -9,6 +9,12 @@
     >
       <user-profile v-if="isAuthenticated"></user-profile>
       <v-divider></v-divider>
+      <v-container>
+        <v-layout row wrap>
+          <v-flex xs6><h4>All lists</h4></v-flex>
+          <v-flex xs6><v-btn flat small :to="{ name: 'Lists' }">Manage</v-btn></v-flex>
+        </v-layout>
+      </v-container>
       <nav-list v-if="isAuthenticated"></nav-list>
     </v-navigation-drawer>
 </template>

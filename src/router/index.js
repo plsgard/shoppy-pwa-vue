@@ -3,6 +3,7 @@ import Router from 'vue-router'
 import store from '@/store'
 import Hello from '@/components/Hello'
 import List from '@/components/List'
+import Lists from '@/components/Lists'
 import NewList from '@/components/NewList'
 import Login from '@/components/Login'
 
@@ -21,6 +22,12 @@ const router = new Router({
       path: '/lists/:id',
       name: 'List',
       component: List,
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/lists',
+      name: 'Lists',
+      component: Lists,
       meta: { requiresAuth: true }
     },
     {

@@ -6,10 +6,13 @@ import router from './router'
 import store from './store'
 import Vuetify from 'vuetify'
 import 'vuetify/dist/vuetify.min.css'
+import Confirm from '@/components/Confirm'
 
 Vue.use(Vuetify)
 
 Vue.config.productionTip = false
+
+Vue.component('confirm', Confirm)
 
 /* eslint-disable no-new */
 new Vue({
