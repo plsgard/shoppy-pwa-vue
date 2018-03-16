@@ -15,7 +15,6 @@
 </template>
 <script>
 import apiService from '@/api/api.service.js'
-import { mapActions } from 'vuex'
 export default {
   data () {
     return {
@@ -23,7 +22,11 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['logout'])
+    logout () {
+      this.$store.dispatch('logout').then(() => {
+        this.$router.push({name: 'Login'})
+      })
+    }
   },
   created () {
     apiService.getProfile().then((profile) => {

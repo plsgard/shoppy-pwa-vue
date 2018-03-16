@@ -81,7 +81,7 @@ const appService = {
   },
   renameList (list) {
     return new Promise((resolve, reject) => {
-      axios.patch('/lists', list)
+      axios.put(`/lists/${list.id}`, list)
         .then(() => {
           resolve()
         }).catch(response => {

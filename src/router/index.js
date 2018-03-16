@@ -1,7 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import store from '@/store'
-import Hello from '@/components/Hello'
 import List from '@/components/List'
 import Lists from '@/components/Lists'
 import NewList from '@/components/NewList'
@@ -14,8 +13,7 @@ const router = new Router({
   routes: [
     {
       path: '/',
-      name: 'Hello',
-      component: Hello,
+      redirect: { name: 'Lists' },
       meta: { requiresAuth: true }
     },
     {

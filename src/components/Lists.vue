@@ -28,10 +28,10 @@
                       <v-icon>more_vert</v-icon>
                     </v-btn>
                     <v-list>
-                      <v-list-tile :key="list.id" @click="renameList(list.name, list.id)">
+                      <v-list-tile @click="renameList(list.name, list.id)">
                         <v-list-tile-title>Rename</v-list-tile-title>
                       </v-list-tile>
-                      <v-list-tile :key="list.id" @click="deleteList(list.id)">
+                      <v-list-tile @click="deleteList(list.id)">
                         <v-list-tile-title>Delete</v-list-tile-title>
                       </v-list-tile>
                     </v-list>
@@ -40,7 +40,7 @@
               </v-list-tile>
             </v-list>
           </v-card>
-          <v-dialog v-model="rename" persistent max-width="290">
+          <v-dialog v-model="rename" persistent max-width="290" @keydown.esc="cancelRename">
             <v-card>
               <v-card-title class="headline">Rename list</v-card-title>
               <v-card-text>
@@ -52,6 +52,7 @@
                       :rules="nameRules"
                       required
                       @keyup.enter="saveRename"
+                      autofocus
                     ></v-text-field>
                   </v-form>
               </v-card-text>
@@ -116,13 +117,14 @@ export default {
     cancelRename () {
       this.$refs.form.reset()
       this.rename = false
+      this.updateList = {}
+      this.updateValid = false
     },
     saveRename () {
       if (this.$refs.form.validate()) {
         apiService.renameList(this.updateList).then(() => {
           this.$store.dispatch('listsModule/getLists')
-          this.$refs.form.reset()
-          this.rename = false
+          this.cancelRename()
         })
       }
     }

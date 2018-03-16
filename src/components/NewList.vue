@@ -26,6 +26,7 @@
                   :rules="nameRules"
                   required
                   @keyup.enter="create"
+                  autofocus
                 ></v-text-field>
               </v-form>
             </v-card-text>
