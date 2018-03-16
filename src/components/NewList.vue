@@ -52,10 +52,12 @@
         this.$router.go(-1)
       },
       create () {
-        apiService.createList({ name: this.name }).then(() => {
-          this.$store.dispatch('listsModule/getLists')
-          this.previous()
-        })
+        if (this.$refs.form.validate()) {
+          apiService.createList({ name: this.name }).then(() => {
+            this.$store.dispatch('listsModule/getLists')
+            this.previous()
+          })
+        }
       }
     }
   }
