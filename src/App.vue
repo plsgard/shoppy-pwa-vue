@@ -1,9 +1,9 @@
 <template>
   <v-app>
     <router-view/>
-    <v-footer fixed app>
+    <!-- <v-footer fixed app>
       <span>&copy; 2018</span>
-    </v-footer>
+    </v-footer> -->
     <confirm ref="confirm"></confirm>
   </v-app>
 </template>

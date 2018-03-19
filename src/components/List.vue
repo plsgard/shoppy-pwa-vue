@@ -9,7 +9,7 @@
       <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
       <v-toolbar-title v-text="list.name"></v-toolbar-title>
       <v-spacer></v-spacer>
-      <v-btn id="createItemBtn" flat large @click="create()" v-show="formEnable" :disabled="!valid">
+      <v-btn id="createItemBtn" flat large @click.stop="create" v-show="formEnable" :disabled="this.name === ''">
         OK
       </v-btn>
     </v-toolbar>
@@ -17,7 +17,7 @@
       <v-layout row>
           <v-flex xs12 sm6 offset-sm3>
             <v-card>
-              <v-list two-line>
+              <v-list>
                 <v-list-tile>
                   <v-list-tile-action>
                     <v-icon>add</v-icon>
@@ -27,18 +27,18 @@
                       <v-text-field
                         label="Add an item"
                         v-model.lazy.trim="name"
-                        :counter="50"
-                        :rules="nameRules"
                         required
+                        single-line
                         @keyup.enter="create"
                         @focus="formEnable = true"
                         @blur="unblur"
                         autofocus
+                        ref="newItem"
                       ></v-text-field>
                     </v-form>
                   </v-list-tile-content>
                 </v-list-tile>
-                <v-divider></v-divider>
+                <v-divider v-if="items.length > 0"></v-divider>
                 <v-list-tile v-for="item in items" :key="item.id">
                   <v-list-tile-action>
                     <v-checkbox></v-checkbox>
@@ -51,6 +51,13 @@
                   </v-list-tile-action>
                 </v-list-tile>
               </v-list>
+              <v-snackbar
+                color="error"
+                v-model="error"
+              >
+                {{ errorMessage }}
+                <v-btn dark flat @click.native="error = false">OK</v-btn>
+              </v-snackbar>
             </v-card>
           </v-flex>
       </v-layout>
@@ -70,15 +77,12 @@ const fetchInitialList = (store) => {
 export default {
   data () {
     return {
+      error: false,
+      errorMessage: '',
       drawer: false,
       name: '',
-      nameRules: [
-        v => !!v || 'Name is required',
-        v => (v && v.length <= 50) || 'Name must be less than 50 characters'
-      ],
       valid: false,
       formEnable: false,
-      listId: this.$route.params.id,
       list: {}
     }
   },
@@ -87,7 +91,10 @@ export default {
   },
   computed: {
     ...mapGetters('itemsModule', ['items']),
-    ...mapGetters('listsModule', ['lists'])
+    ...mapGetters('listsModule', ['lists']),
+    listId: function () {
+      return this.$route.params.id
+    }
   },
   methods: {
     loadList () {
@@ -101,31 +108,47 @@ export default {
       fetchInitialData(this.$store, this.$route)
     },
     create () {
-      if (this.$refs.form.validate()) {
-        apiService.createItem({ listId: this.listId, name: this.name }).then(() => {
-          this.loadItems()
-          this.$refs.form.reset()
-        })
+      if (this.$refs.form.validate() && this.name !== '') {
+        if (this.name.length > 100) {
+          this.valid = false
+          this.displayError('Item name must be less than 100 characters')
+        } else {
+          this.valid = true
+          apiService.createItem({ listId: this.listId, name: this.name }).then(() => {
+            this.loadItems()
+            this.initForm()
+          })
+        }
       }
     },
     deleteItem (id) {
       apiService.deleteItem(id).then(() => {
         this.loadItems()
-        this.$refs.form.reset()
+        this.initForm()
       })
     },
     unblur (event) {
       if (event.relatedTarget === null || event.relatedTarget.id !== 'createItemBtn') {
         this.formEnable = false
       }
+    },
+    initForm () {
+      this.$refs.form.reset()
+      this.valid = true
+      this.name = ''
+      this.$refs.newItem.$el.focus()
+      this.$refs.newItem.$el.blur()
+    },
+    displayError (text) {
+      this.errorMessage = text
+      this.error = true
     }
   },
   watch: {
     '$route' (to, from) {
-      this.listId = this.$route.params.id
       this.loadList()
       this.loadItems()
-      this.$refs.form.reset()
+      this.initForm()
     }
   },
   created () {
