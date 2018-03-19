@@ -9,7 +9,7 @@
       <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
       <v-toolbar-title v-text="list.name"></v-toolbar-title>
       <v-spacer></v-spacer>
-      <v-btn flat large @click.stop="create()" v-show="formEnable" :disabled="!valid">
+      <v-btn id="createItemBtn" flat large @click="create()" v-show="formEnable" :disabled="!valid">
         OK
       </v-btn>
     </v-toolbar>
@@ -23,7 +23,7 @@
                     <v-icon>add</v-icon>
                   </v-list-tile-action>
                   <v-list-tile-content xs12>
-                    <v-form v-model="valid" v-on:submit.prevent ref="form" lazy-validation style="width: 100%">
+                    <v-form v-model="valid" v-on:submit.prevent ref="form" style="width: 100%">
                       <v-text-field
                         label="Add an item"
                         v-model.lazy.trim="name"
@@ -32,7 +32,7 @@
                         required
                         @keyup.enter="create"
                         @focus="formEnable = true"
-                        @blur="formEnable = false"
+                        @blur="unblur"
                         autofocus
                       ></v-text-field>
                     </v-form>
@@ -113,6 +113,11 @@ export default {
         this.loadItems()
         this.$refs.form.reset()
       })
+    },
+    unblur (event) {
+      if (event.relatedTarget === null || event.relatedTarget.id !== 'createItemBtn') {
+        this.formEnable = false
+      }
     }
   },
   watch: {
