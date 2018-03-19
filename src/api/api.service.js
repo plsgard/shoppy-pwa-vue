@@ -59,9 +59,29 @@ const appService = {
         })
     })
   },
+  getList (id) {
+    return new Promise((resolve, reject) => {
+      axios.get(`/lists/${id}`)
+        .then(response => {
+          resolve(response.data)
+        }).catch(response => {
+          reject(response.status)
+        })
+    })
+  },
   createItem (item) {
     return new Promise((resolve, reject) => {
       axios.post('/items', item)
+        .then(response => {
+          resolve(response.data)
+        }).catch(response => {
+          reject(response.status)
+        })
+    })
+  },
+  deleteItem (id) {
+    return new Promise((resolve, reject) => {
+      axios.delete(`/items/${id}`)
         .then(response => {
           resolve(response.data)
         }).catch(response => {

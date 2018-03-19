@@ -53,9 +53,10 @@
       },
       create () {
         if (this.$refs.form.validate()) {
-          apiService.createList({ name: this.name }).then(() => {
-            this.$store.dispatch('listsModule/getLists')
-            this.previous()
+          apiService.createList({ name: this.name }).then((data) => {
+            this.$store.dispatch('listsModule/getLists').then(() => {
+              this.$router.push({ name: 'List', params: { id: data.id } })
+            })
           })
         }
       }

@@ -1,6 +1,6 @@
 <template>
   <v-list>
-    <v-list-tile v-for="list in lists" :key="list.id" :to="{ name: 'List', params: { id: list.id, listName: list.name } }">
+    <v-list-tile v-for="list in lists" :key="list.id" :to="{ name: 'List', params: { id: list.id } }">
       <v-list-tile-action>
         <v-icon>list</v-icon>
       </v-list-tile-action>

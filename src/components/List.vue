@@ -7,9 +7,9 @@
       fixed
     >
       <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
-      <v-toolbar-title v-text="listName"></v-toolbar-title>
+      <v-toolbar-title v-text="list.name"></v-toolbar-title>
       <v-spacer></v-spacer>
-      <v-btn flat large @click.stop="create" v-show="formEnable" :disabled="!valid">
+      <v-btn flat large @click.stop="create()" v-show="formEnable" :disabled="!valid">
         OK
       </v-btn>
     </v-toolbar>
@@ -33,6 +33,7 @@
                         @keyup.enter="create"
                         @focus="formEnable = true"
                         @blur="formEnable = false"
+                        autofocus
                       ></v-text-field>
                     </v-form>
                   </v-list-tile-content>
@@ -45,7 +46,7 @@
                   <v-list-tile-content>
                     <v-list-tile-title v-text="item.name"></v-list-tile-title>
                   </v-list-tile-content>
-                  <v-list-tile-action class="delete">
+                  <v-list-tile-action class="delete" @click="deleteItem(item.id)">
                     <v-icon>delete</v-icon>
                   </v-list-tile-action>
                 </v-list-tile>
@@ -63,8 +64,10 @@ import Navigation from '@/components/Navigation'
 const fetchInitialData = (store, route) => {
   return store.dispatch('itemsModule/getListItems', route.params.id)
 }
+const fetchInitialList = (store) => {
+  return store.dispatch('listsModule/getLists')
+}
 export default {
-  props: ['listName'],
   data () {
     return {
       drawer: false,
@@ -75,35 +78,53 @@ export default {
       ],
       valid: false,
       formEnable: false,
-      listId: this.$route.params.id
+      listId: this.$route.params.id,
+      list: {}
     }
   },
   asyncData (store, route) {
     return fetchInitialData(store, route)
   },
   computed: {
-    ...mapGetters('itemsModule', ['items'])
+    ...mapGetters('itemsModule', ['items']),
+    ...mapGetters('listsModule', ['lists'])
   },
   methods: {
+    loadList () {
+      fetchInitialList(this.$store).then(() => {
+        this.list = this.lists.find((el) => {
+          return el.id === this.listId
+        })
+      })
+    },
     loadItems () {
       fetchInitialData(this.$store, this.$route)
     },
     create () {
       if (this.$refs.form.validate()) {
         apiService.createItem({ listId: this.listId, name: this.name }).then(() => {
-          this.$store.dispatch('itemsModule/getListItems')
-          this.name = ''
-          this.valid = false
+          this.loadItems()
+          this.$refs.form.reset()
         })
       }
+    },
+    deleteItem (id) {
+      apiService.deleteItem(id).then(() => {
+        this.loadItems()
+        this.$refs.form.reset()
+      })
     }
   },
   watch: {
     '$route' (to, from) {
+      this.listId = this.$route.params.id
+      this.loadList()
       this.loadItems()
+      this.$refs.form.reset()
     }
   },
   created () {
+    this.loadList()
     this.loadItems()
   },
   components: {
@@ -117,5 +138,6 @@ export default {
 }
 .list__tile:hover > .list__tile__action.delete > .icon {
   display: inline-flex;
+  cursor: pointer;
 }
 </style>

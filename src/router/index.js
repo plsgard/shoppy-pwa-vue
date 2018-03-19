@@ -20,7 +20,6 @@ const router = new Router({
       path: '/lists/:id',
       name: 'List',
       component: List,
-      props: true,
       meta: { requiresAuth: true }
     },
     {
