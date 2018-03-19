@@ -38,18 +38,39 @@
                     </v-form>
                   </v-list-tile-content>
                 </v-list-tile>
-                <v-divider v-if="items.length > 0"></v-divider>
-                <v-list-tile v-for="item in items" :key="item.id">
+                <v-divider v-if="items.length"></v-divider>
+                <v-list-tile v-for="item in items" v-if="!item.picked" :key="item.id" href="javascript:;">
                   <v-list-tile-action>
-                    <v-checkbox></v-checkbox>
+                    <v-checkbox v-model="item.picked" @click="pickItem(item.id, !item.picked)"></v-checkbox>
                   </v-list-tile-action>
-                  <v-list-tile-content>
+                  <v-list-tile-content @click="pickItem(item.id, !item.picked)">
                     <v-list-tile-title v-text="item.name"></v-list-tile-title>
                   </v-list-tile-content>
                   <v-list-tile-action class="delete" @click="deleteItem(item.id)">
                     <v-icon>delete</v-icon>
                   </v-list-tile-action>
                 </v-list-tile>
+                <v-list-group
+            v-if="pickedItems.length"
+            no-action
+          >
+          <v-list-tile slot="activator">
+              <v-list-tile-content>
+                <v-list-tile-title>{{ pickedItems.length }} picked items</v-list-tile-title>
+              </v-list-tile-content>
+            </v-list-tile>
+          <v-list-tile v-for="item in pickedItems" v-if="item.picked" :key="item.id" href="javascript:;">
+                  <v-list-tile-action>
+                    <v-checkbox v-model="item.picked" @click="pickItem(item.id, !item.picked)"></v-checkbox>
+                  </v-list-tile-action>
+                  <v-list-tile-content @click="pickItem(item.id, !item.picked)">
+                    <v-list-tile-title v-text="item.name"></v-list-tile-title>
+                  </v-list-tile-content>
+                  <v-list-tile-action class="delete" @click="deleteItem(item.id)">
+                    <v-icon>delete</v-icon>
+                  </v-list-tile-action>
+                </v-list-tile>
+                </v-list-group>
               </v-list>
               <v-snackbar
                 color="error"
@@ -94,6 +115,11 @@ export default {
     ...mapGetters('listsModule', ['lists']),
     listId: function () {
       return this.$route.params.id
+    },
+    pickedItems: function () {
+      return this.items.filter(function (el) {
+        return el.picked
+      })
     }
   },
   methods: {
@@ -142,6 +168,13 @@ export default {
     displayError (text) {
       this.errorMessage = text
       this.error = true
+    },
+    pickItem (id, toPick) {
+      console.log(id, toPick)
+      apiService.pickItem(id, toPick).then(() => {
+        this.loadItems()
+        this.initForm()
+      })
     }
   },
   watch: {

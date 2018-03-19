@@ -89,6 +89,22 @@ const appService = {
         })
     })
   },
+  pickItem (id, isPicked) {
+    return new Promise((resolve, reject) => {
+      axios.patch(`/items/${id}`, [
+        {
+          'op': 'replace',
+          'path': '/picked',
+          'value': isPicked
+        }
+      ])
+        .then(() => {
+          resolve()
+        }).catch(response => {
+          reject(response.status)
+        })
+    })
+  },
   deleteList (listId) {
     return new Promise((resolve, reject) => {
       axios.delete(`/lists/${listId}`)
