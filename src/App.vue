@@ -16,3 +16,8 @@ export default {
   }
 }
 </script>
+<style>
+.toolbar{
+  z-index: 6;
+}
+</style>

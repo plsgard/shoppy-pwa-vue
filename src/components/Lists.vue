@@ -1,12 +1,11 @@
 <template>
   <v-container fluid>
-    <app-nav :drawer="drawer"></app-nav>
+    <app-nav ref="navBar"></app-nav>
     <v-toolbar
       app
       clipped-left
-      fixed
     >
-      <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
+      <v-toolbar-side-icon @click.stop="$refs.navBar.toggleDrawer()"></v-toolbar-side-icon>
       <v-toolbar-title>Shopping lists</v-toolbar-title>
       <v-spacer></v-spacer>
       <v-btn icon :to="{ name: 'NewList' }">

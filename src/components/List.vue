@@ -1,12 +1,13 @@
 <template>
 <v-container fluid>
-    <app-nav :drawer="drawer"></app-nav>
+    <app-nav ref="navBar"></app-nav>
     <v-toolbar
       app
       clipped-left
       fixed
+      absolute
     >
-      <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
+      <v-toolbar-side-icon @click.stop="$refs.navBar.toggleDrawer()"></v-toolbar-side-icon>
       <v-toolbar-title v-text="list.name"></v-toolbar-title>
       <v-spacer></v-spacer>
       <v-btn id="createItemBtn" flat large @click.stop="create" v-show="formEnable" :disabled="this.name === ''">
@@ -107,7 +108,6 @@ export default {
     return {
       error: false,
       errorMessage: '',
-      drawer: false,
       name: '',
       valid: false,
       formEnable: false,

@@ -2,10 +2,12 @@
   <v-navigation-drawer
       persistent
       clipped
-      v-model="drawer"
+      v-model="drawerState"
       enable-resize-watcher
       fixed
       app
+      absolute
+      temporary
     >
       <user-profile v-if="isAuthenticated"></user-profile>
       <v-divider></v-divider>
@@ -17,9 +19,22 @@ import { mapGetters } from 'vuex'
 import NavLists from '@/components/NavLists'
 import Profile from '@/components/Profile'
 export default {
-  props: ['drawer'],
   computed: {
-    ...mapGetters(['isAuthenticated'])
+    ...mapGetters(['isAuthenticated', 'drawer']),
+    drawerState: {
+      get () {
+        return this.drawer
+      },
+      set (state) {
+        this.$store.dispatch('setDrawer', state)
+      }
+    }
+  },
+  methods: {
+    toggleDrawer () {
+      // this.$store.dispatch('setDrawer', !this.drawer)
+      this.drawerState = !this.drawerState
+    }
   },
   components: {
     'nav-list': NavLists,

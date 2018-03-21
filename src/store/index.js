@@ -9,7 +9,8 @@ Vue.use(Vuex)
 const debug = process.env.NODE_ENV !== 'production'
 
 const state = {
-  isAuthenticated: true
+  isAuthenticated: true,
+  drawer: false
 }
 
 const store = new Vuex.Store({
@@ -22,6 +23,9 @@ const store = new Vuex.Store({
   getters: {
     isAuthenticated: (state) => {
       return state.isAuthenticated
+    },
+    drawer: (state) => {
+      return state.drawer
     }
   },
   actions: {
@@ -39,6 +43,9 @@ const store = new Vuex.Store({
             window.alert('Could not login!')
           })
       })
+    },
+    setDrawer (context, newVal) {
+      context.commit('setDrawer', newVal)
     }
   },
   mutations: {
@@ -55,6 +62,9 @@ const store = new Vuex.Store({
         window.localStorage.setItem('tokenExpiration', token.expires_in)
       }
       state.isAuthenticated = true
+    },
+    setDrawer: (state, newVal) => {
+      state.drawer = newVal
     }
   }
 })
