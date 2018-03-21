@@ -22,7 +22,7 @@
                   <v-list-tile-action>
                     <v-icon>add</v-icon>
                   </v-list-tile-action>
-                  <v-list-tile-content xs12>
+                  <v-list-tile-content>
                     <v-form v-model="valid" v-on:submit.prevent ref="form" style="width: 100%">
                       <v-text-field
                         label="Add an item"
@@ -33,6 +33,8 @@
                         @focus="formEnable = true"
                         @blur="unblur"
                         autofocus
+                        solo
+                        flat
                         ref="newItem"
                       ></v-text-field>
                     </v-form>
@@ -53,10 +55,11 @@
                 <v-list-group
             v-if="pickedItems.length"
             no-action
+            prepend-icon="shopping_basket"
           >
           <v-list-tile slot="activator">
               <v-list-tile-content>
-                <v-list-tile-title>{{ pickedItems.length }} picked items</v-list-tile-title>
+                <v-list-tile-title>{{ pickedItems.length > 0 && pickedItems.length !== items.length ? pickedItems.length : 'All' }} picked {{ pickedItems.length > 1 ? 'items' : 'item' }}</v-list-tile-title>
               </v-list-tile-content>
             </v-list-tile>
           <v-list-tile v-for="item in pickedItems" v-if="item.picked" :key="item.id" href="javascript:;">
@@ -200,5 +203,8 @@ export default {
 .list__tile:hover > .list__tile__action.delete > .icon {
   display: inline-flex;
   cursor: pointer;
+}
+.input-group.input-group--solo >>> label, .input-group.input-group--solo >>> .input-group__input {
+  padding-left: 0;
 }
 </style>

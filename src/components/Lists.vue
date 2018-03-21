@@ -16,7 +16,7 @@
     <v-content>
       <v-layout row>
         <v-flex xs12 sm6 offset-sm3>
-          <v-card>
+          <v-card v-if="lists.length">
             <v-list>
               <v-list-tile v-for="list in lists" :key="list.id">
                 <v-list-tile-content>
@@ -39,6 +39,11 @@
                 </v-list-tile-action>
               </v-list-tile>
             </v-list>
+          </v-card>
+          <v-card v-else>
+            <v-card-text>
+            Create your first list using the "+" button in the top right corner.
+            </v-card-text>
           </v-card>
           <v-dialog v-model="rename" persistent max-width="290" @keydown.esc="cancelRename">
             <v-card>
