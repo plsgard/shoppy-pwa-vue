@@ -13,7 +13,7 @@
         OK
       </v-btn>
     </v-toolbar>
-    <v-content>
+    <v-content class="pt-5">
       <v-layout row>
           <v-flex xs12 sm6 offset-sm3>
             <v-card>
@@ -27,7 +27,6 @@
                       <v-text-field
                         label="Add an item"
                         v-model.lazy.trim="name"
-                        required
                         single-line
                         @keyup.enter="create"
                         @focus="formEnable = true"
@@ -60,7 +59,7 @@
             v-if="pickedItems.length"
             no-action
             prepend-icon="shopping_basket"
-            class="grey--text text--ligthen-1"
+            class="grey--text text--darken-1"
           >
           <v-list-tile slot="activator">
               <v-list-tile-content>
