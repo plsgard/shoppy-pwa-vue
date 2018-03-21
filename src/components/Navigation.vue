@@ -24,11 +24,6 @@ export default {
   components: {
     'nav-list': NavLists,
     'user-profile': Profile
-  },
-  watch: {
-    drawer (value) {
-      return value
-    }
   }
 }
 </script>
