@@ -41,7 +41,10 @@
                   </v-list-tile-content>
                 </v-list-tile>
                 <v-divider v-if="items.length"></v-divider>
-                <v-list-tile v-for="item in items" v-if="!item.picked" :key="item.id" href="javascript:;">
+                <transition-group name="slide-x-transition">
+                <v-list-tile v-for="item in items" v-if="!item.picked" :key="item.id" href="javascript:;" v-touch="{
+      left: () => deleteItem(item.id)
+    }">
                   <v-list-tile-action>
                     <v-checkbox v-model="item.picked" @click="pickItem(item.id, !item.picked)"></v-checkbox>
                   </v-list-tile-action>
@@ -52,6 +55,7 @@
                     <v-icon>delete</v-icon>
                   </v-list-tile-action>
                 </v-list-tile>
+                </transition-group>
                 <v-list-group
             v-if="pickedItems.length"
             no-action
@@ -173,7 +177,6 @@ export default {
       this.error = true
     },
     pickItem (id, toPick) {
-      console.log(id, toPick)
       apiService.pickItem(id, toPick).then(() => {
         this.loadItems()
         this.initForm()
