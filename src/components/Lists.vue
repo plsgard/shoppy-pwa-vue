@@ -111,7 +111,7 @@ export default {
       this.rename = true
     },
     deleteList (id) {
-      this.$root.$confirm.open('Delete list', 'Are you sure?', { color: 'red' }).then((confirm) => {
+      this.$root.$confirm.open('Delete the list', 'Are you sure? This list and all related items will be deleted.', { color: 'red' }).then((confirm) => {
         if (confirm) {
           apiService.deleteList(id).then(() => {
             this.$store.dispatch('listsModule/getLists')

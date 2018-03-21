@@ -60,6 +60,7 @@
             v-if="pickedItems.length"
             no-action
             prepend-icon="shopping_basket"
+            class="grey--text text--ligthen-1"
           >
           <v-list-tile slot="activator">
               <v-list-tile-content>

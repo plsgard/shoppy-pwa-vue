@@ -1,5 +1,7 @@
 <template>
-  <v-list>
+  <v-list subheader>
+    <v-subheader><v-flex xs6><h4>All lists</h4></v-flex>
+          <v-flex xs6 class="text-xs-right"><v-btn class="mx-0" flat small color="primary" :to="{ name: 'Lists' }" exact>Manage</v-btn></v-flex></v-subheader>
     <v-list-tile v-for="list in lists" :key="list.id" :to="{ name: 'List', params: { id: list.id } }">
       <v-list-tile-action>
         <v-icon>list</v-icon>

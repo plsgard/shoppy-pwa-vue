@@ -1,14 +1,15 @@
 <template>
 <v-container>
   <v-layout row wrap>
-    <v-flex xs12>
-    <v-avatar class="indigo">
+    <v-flex xs12 class="mb-1">
+    <v-avatar class="indigo mb-2">
         <v-icon dark>account_circle</v-icon>
     </v-avatar>
-    <h3>{{ profile.firstName }} {{ profile.lastName }}</h3>
-    <a href="#">{{ profile.email }}</a>
-    <v-spacer></v-spacer>
-    <v-btn @click="logout()" small>logout</v-btn>
+    <h4>{{ profile.firstName }} {{ profile.lastName }}</h4>
+    <span class="grey--text text--darken-1">{{ profile.email }}</span>
+    </v-flex>
+    <v-flex xs12>
+    <v-btn class="mx-0 mb-0 btn--active" @click="logout()" flat small color="primary">logout</v-btn>
     </v-flex>
   </v-layout>
 </v-container>
