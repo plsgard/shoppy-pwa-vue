@@ -6,12 +6,15 @@
           <v-layout align-center column>
           <img src="@/assets/logo.png" alt="Vuetify.js" class="mb-5">
           </v-layout>
-          <v-card>
+          <v-card class="elevation-12">
+            <v-toolbar dark color="primary">
+                <v-toolbar-title>Welcome on Shoppy app</v-toolbar-title>
+              </v-toolbar>
             <v-card-text v-if="isAuthenticated">
               Hello !
             </v-card-text>
             <v-card-text v-else>
-              <v-form v-model="valid" v-on:submit.prevent ref="form" lazy-validation>
+              <v-form v-model="valid" v-on:submit.prevent ref="form" lazy-validation id="login">
                 <v-text-field
                   prepend-icon="person"
                   label="E-mail"

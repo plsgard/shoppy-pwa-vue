@@ -4,6 +4,7 @@
     <v-toolbar
       app
       clipped-left
+      dark color="primary"
     >
       <v-toolbar-side-icon @click.stop="$refs.navBar.toggleDrawer()"></v-toolbar-side-icon>
       <v-toolbar-title>Shopping lists</v-toolbar-title>

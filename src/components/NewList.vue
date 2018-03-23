@@ -3,7 +3,8 @@
   <v-toolbar
       app
       clipped-left
-      fixed>
+      fixed
+      dark color="primary">
       <v-btn icon @click.stop="previous">
         <v-icon>arrow_back</v-icon>
       </v-btn>

@@ -11,9 +11,10 @@ module.exports = {
     browser
       .url(devServer)
       .waitForElementVisible('#app', 5000)
-      .assert.elementPresent('#quote')
-      .assert.containsText('#quote', '“First, solve the problem. Then, write the code.”')
-      .assert.elementCount('img', 1)
+      .assert.elementPresent('#login')
+      .assert.elementPresent('.toolbar__title')
+      .assert.containsText('.toolbar__title', 'Welcome on Shoppy app')
+      .assert.elementCount('input', 2)
       .end()
   }
 }

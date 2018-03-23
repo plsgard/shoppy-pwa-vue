@@ -4,8 +4,7 @@
     <v-toolbar
       app
       clipped-left
-      fixed
-      absolute
+      dark color="primary"
     >
       <v-toolbar-side-icon @click.stop="$refs.navBar.toggleDrawer()"></v-toolbar-side-icon>
       <v-toolbar-title v-text="list.name"></v-toolbar-title>
