@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-axios.defaults.baseURL = 'http://localhost:5000/api/v1'// 'https://shoppy-api.azurewebsites.net/api/v1'
+axios.defaults.baseURL = process.env.API_URL
 
 axios.interceptors.request.use(function (config) {
   if (typeof window === 'undefined') {
