@@ -42,7 +42,7 @@
           </v-card>
           <v-card v-else>
             <v-card-text>
-            Create your first list using the "+" button in the top right corner.
+            <p class="subheading my-1"><v-icon>playlist_add</v-icon>  Create your first list using the "+" button in the top right corner.</p>
             </v-card-text>
           </v-card>
           <v-dialog v-model="rename" persistent max-width="290" @keydown.esc="cancelRename">

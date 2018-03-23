@@ -5,6 +5,7 @@ import List from '@/components/List'
 import Lists from '@/components/Lists'
 import NewList from '@/components/NewList'
 import Login from '@/components/Login'
+import NotFound from '@/components/NotFound'
 
 Vue.use(Router)
 
@@ -38,6 +39,11 @@ const router = new Router({
       path: '/login',
       name: 'Login',
       component: Login
+    },
+    {
+      path: '*',
+      component: NotFound,
+      meta: { requiresAuth: true }
     }
   ]
 })

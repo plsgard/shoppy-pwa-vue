@@ -11,7 +11,7 @@
                 <v-toolbar-title>Welcome on Shoppy app</v-toolbar-title>
               </v-toolbar>
             <v-card-text v-if="isAuthenticated">
-              Hello !
+              <p class="subheading my-1">You're authenticated!</p>
             </v-card-text>
             <v-card-text v-else>
               <v-form v-model="valid" v-on:submit.prevent ref="form" lazy-validation id="login">
