@@ -18,7 +18,6 @@ before_install:
   - npm prune
 
 install:
-  - npm cache clean
   - npm install
 
 script:
