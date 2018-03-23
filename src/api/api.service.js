@@ -105,6 +105,22 @@ const appService = {
         })
     })
   },
+  renameItem (id, name) {
+    return new Promise((resolve, reject) => {
+      axios.patch(`/items/${id}`, [
+        {
+          'op': 'replace',
+          'path': '/name',
+          'value': name
+        }
+      ])
+        .then(() => {
+          resolve()
+        }).catch(response => {
+          reject(response.status)
+        })
+    })
+  },
   deleteList (listId) {
     return new Promise((resolve, reject) => {
       axios.delete(`/lists/${listId}`)

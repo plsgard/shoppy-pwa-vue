@@ -42,14 +42,23 @@
                 </v-list-tile>
                 <v-divider v-if="items.length"></v-divider>
                 <transition-group name="slide-x-transition">
-                <v-list-tile v-for="item in items" v-if="!item.picked" :key="item.id" href="javascript:;" v-touch="{
+                <v-list-tile v-for="(item,index) in items" v-if="!item.picked" :key="item.id" v-touch="{
       left: () => deleteItem(item.id)
     }">
                   <v-list-tile-action>
                     <v-checkbox v-model="item.picked" @click="pickItem(item.id, !item.picked)"></v-checkbox>
                   </v-list-tile-action>
-                  <v-list-tile-content @click="pickItem(item.id, !item.picked)">
-                    <v-list-tile-title v-text="item.name"></v-list-tile-title>
+                  <v-list-tile-content>
+                    <!-- <v-list-tile-title v-text="item.name"></v-list-tile-title> -->
+                    <v-form v-on:submit.prevent ref="updateForm" style="width: 100%">
+                      <v-text-field
+                        :value="item.name"
+                        single-line
+                        solo
+                        flat
+                        @change="update(item.id, $event, $refs.updateForm[index])"
+                      ></v-text-field>
+                    </v-form>
                   </v-list-tile-content>
                   <v-list-tile-action class="delete" @click="deleteItem(item.id)">
                     <v-icon>delete</v-icon>
@@ -152,6 +161,22 @@ export default {
             this.initForm()
           })
         }
+      }
+    },
+    update (id, updateName, form) {
+      if (form.validate() && updateName !== '' && updateName.trim() !== '') {
+        updateName = updateName.trim()
+        if (updateName.length > 100) {
+          form.valid = false
+          this.displayError('Item name must be less than 100 characters')
+        } else {
+          form.valid = true
+          apiService.renameItem(id, updateName).then(() => {
+            this.loadItems()
+          })
+        }
+      } else {
+        form.valid = false
       }
     },
     deleteItem (id) {

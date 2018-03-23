@@ -18,7 +18,7 @@
           <v-card v-if="lists.length">
             <v-list>
               <v-list-tile v-for="list in lists" :key="list.id">
-                <v-list-tile-content>
+                <v-list-tile-content @click="goToList(list.id)">
                   <v-list-tile-title v-text="list.name"></v-list-tile-title>
                 </v-list-tile-content>
                 <v-list-tile-action>
@@ -102,6 +102,9 @@ export default {
     loadLists () {
       fetchInitialData(this.$store)
     },
+    goToList (id) {
+      this.$router.push({name: 'List', params: {id: id}})
+    },
     renameList (name, id) {
       this.updateList = {
         id: id,
@@ -141,3 +144,8 @@ export default {
   }
 }
 </script>
+<style scoped>
+.list__tile__content:hover{
+  cursor: pointer;
+}
+</style>
