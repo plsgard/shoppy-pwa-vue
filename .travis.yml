@@ -25,6 +25,7 @@ script:
   - npm run build
 
 before_deploy:
+  - cp build/web.config dist/web.config
   - cd dist
 deploy:
   provider: azure_web_apps
