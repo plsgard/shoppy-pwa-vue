@@ -10,7 +10,7 @@ import NotFound from '@/components/NotFound'
 Vue.use(Router)
 
 const router = new Router({
-  mode: 'history',
+  // mode: 'history', can't work with service worker !!!
   routes: [
     {
       path: '/',
