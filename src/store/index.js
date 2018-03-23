@@ -9,7 +9,7 @@ Vue.use(Vuex)
 const debug = process.env.NODE_ENV !== 'production'
 
 const state = {
-  isAuthenticated: debug,
+  isAuthenticated: !!localStorage.getItem('token'),
   drawer: false
 }
 
@@ -51,17 +51,17 @@ const store = new Vuex.Store({
   mutations: {
     logout (state) {
       if (typeof window !== 'undefined') {
-        window.localStorage.setItem('token', null)
-        window.localStorage.setItem('tokenExpiration', null)
+        localStorage.setItem('token', null)
+        localStorage.setItem('tokenExpiration', null)
       }
-      state.isAuthenticated = false
+      // state.isAuthenticated = false
     },
     login (state, token) {
       if (typeof window !== 'undefined') {
-        window.localStorage.setItem('token', token.auth_token)
-        window.localStorage.setItem('tokenExpiration', token.expires_in)
+        localStorage.setItem('token', token.auth_token)
+        localStorage.setItem('tokenExpiration', token.expires_in)
       }
-      state.isAuthenticated = true
+      // state.isAuthenticated = true
     },
     setDrawer: (state, newVal) => {
       state.drawer = newVal
@@ -73,8 +73,8 @@ if (typeof window !== 'undefined') {
   document.addEventListener('DOMContentLoaded', function (event) {
     let expiration = window.localStorage.getItem('tokenExpiration')
     var unixTimestamp = new Date().getTime() / 1000
-    if (expiration !== null && parseInt(expiration) - unixTimestamp > 0) {
-      store.state.isAuthenticated = true
+    if (expiration === null || parseInt(expiration) - unixTimestamp < 0) {
+      store.dispatch('logout')
     }
   })
 }
