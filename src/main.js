@@ -8,7 +8,12 @@ import Vuetify from 'vuetify'
 import 'vuetify/dist/vuetify.min.css'
 import Confirm from '@/components/Confirm'
 
-Vue.use(Vuetify)
+Vue.use(Vuetify, {
+  theme: {
+    primary: '#f14d09',
+    secondary: '#525252'
+  }
+})
 
 Vue.config.productionTip = false
 

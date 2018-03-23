@@ -4,7 +4,7 @@
       app
       clipped-left
       fixed
-      dark color="primary">
+      dark color="secondary">
       <v-btn icon @click.stop="previous">
         <v-icon>arrow_back</v-icon>
       </v-btn>

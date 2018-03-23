@@ -4,10 +4,10 @@
       <v-layout align-center justify-center>
         <v-flex xs12 sm8 md4>
           <v-layout align-center column>
-          <img src="@/assets/logo.png" alt="Vuetify.js" class="mb-5">
+          <img src="@/assets/logo.png" alt="Vuetify.js" class="mb-5" width="200">
           </v-layout>
           <v-card class="elevation-12">
-            <v-toolbar dark color="primary">
+            <v-toolbar dark color="secondary">
                 <v-toolbar-title>Welcome on Shoppy app</v-toolbar-title>
               </v-toolbar>
             <v-card-text v-if="isAuthenticated">
