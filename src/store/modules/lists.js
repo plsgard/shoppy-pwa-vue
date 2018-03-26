@@ -3,17 +3,32 @@ const state = {
   lists: []
 }
 
-// const inBrowser = typeof window !== 'undefined'
-// const state = (inBrowser && window.__INITIAL_STATE__) ? window.__INITIAL_STATE__.postsModule : defaultState
-
 const getters = {
   lists: state => state.lists
 }
 
 const actions = {
-  getLists (context) {
-    return apiService.getLists().then(data => {
-      context.commit('setLists', data)
+  getLists ({ commit }) {
+    if (navigator.onLine) {
+      return apiService.getLists().then(data => {
+        commit('setLists', data)
+        localStorage.setItem('lists', JSON.stringify(data))
+      })
+    } else {
+      return new Promise((resolve, reject) => {
+        commit('setLists', JSON.parse(localStorage.getItem('lists')))
+        resolve()
+      })
+    }
+  },
+  deleteList ({ dispatch }, id) {
+    return apiService.deleteList(id).then(() => {
+      dispatch('getLists')
+    })
+  },
+  renameList ({ dispatch }, listToUpdate) {
+    return apiService.renameList(listToUpdate).then(() => {
+      dispatch('getLists')
     })
   }
 }

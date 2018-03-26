@@ -88,13 +88,6 @@
                 </v-list-tile>
                 </v-list-group>
               </v-list>
-              <v-snackbar
-                color="error"
-                v-model="error"
-              >
-                {{ errorMessage }}
-                <v-btn dark flat @click.native="error = false">OK</v-btn>
-              </v-snackbar>
             </v-card>
           </v-flex>
       </v-layout>
@@ -102,8 +95,7 @@
 </v-container>
 </template>
 <script>
-import { mapGetters } from 'vuex'
-import apiService from '@/api/api.service.js'
+import { mapGetters, mapActions } from 'vuex'
 import Navigation from '@/components/Navigation'
 const fetchInitialData = (store, route) => {
   return store.dispatch('itemsModule/getListItems', route.params.id)
@@ -138,6 +130,12 @@ export default {
     }
   },
   methods: {
+    ...mapActions('itemsModule', {
+      delete: 'deleteItem',
+      rename: 'renameItem',
+      createNew: 'createItem',
+      pick: 'pickItem'
+    }),
     loadList () {
       fetchInitialList(this.$store).then(() => {
         this.list = this.lists.find((el) => {
@@ -146,19 +144,19 @@ export default {
       })
     },
     loadItems () {
-      fetchInitialData(this.$store, this.$route)
+      fetchInitialData(this.$store, this.$route).catch(() => this.$root.$error.displayDefaultError())
     },
     create () {
       if (this.$refs.form.validate() && this.name !== '') {
         if (this.name.length > 100) {
           this.valid = false
-          this.displayError('Item name must be less than 100 characters')
+          this.$root.$error.displayError('Item name must be less than 100 characters')
         } else {
           this.valid = true
-          apiService.createItem({ listId: this.listId, name: this.name }).then(() => {
+          this.createNew({ listId: this.listId, name: this.name }).then(() => {
             this.loadItems()
             this.initForm()
-          })
+          }).catch(() => this.$root.$error.displayDefaultError())
         }
       }
     },
@@ -167,22 +165,22 @@ export default {
         updateName = updateName.trim()
         if (updateName.length > 100) {
           form.valid = false
-          this.displayError('Item name must be less than 100 characters')
+          this.$root.$error.displayError('Item name must be less than 100 characters')
         } else {
           form.valid = true
-          apiService.renameItem(id, updateName).then(() => {
+          this.rename({id, updateName}).then(() => {
             this.loadItems()
-          })
+          }).catch(() => this.$root.$error.displayDefaultError())
         }
       } else {
         form.valid = false
       }
     },
     deleteItem (id) {
-      apiService.deleteItem(id).then(() => {
+      this.delete(id).then(() => {
         this.loadItems()
         this.initForm()
-      })
+      }).catch(() => { this.$root.$error.displayDefaultError() })
     },
     unblur (event) {
       if (event.relatedTarget === null || event.relatedTarget.id !== 'createItemBtn') {
@@ -196,15 +194,11 @@ export default {
       this.$refs.newItem.$el.focus()
       this.$refs.newItem.$el.blur()
     },
-    displayError (text) {
-      this.errorMessage = text
-      this.error = true
-    },
     pickItem (id, toPick) {
-      apiService.pickItem(id, toPick).then(() => {
+      this.pick({id, toPick}).then(() => {
         this.loadItems()
         this.initForm()
-      })
+      }).catch(() => this.$root.$error.displayDefaultError())
     }
   },
   watch: {

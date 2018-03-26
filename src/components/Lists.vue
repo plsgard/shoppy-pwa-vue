@@ -45,7 +45,7 @@
             <p class="subheading my-1"><v-icon>playlist_add</v-icon>  Create your first list using the "+" button in the top right corner.</p>
             </v-card-text>
           </v-card>
-          <v-dialog v-model="rename" persistent max-width="290" @keydown.esc="cancelRename">
+          <v-dialog v-model="renameForm" persistent max-width="290" @keydown.esc="cancelRename">
             <v-card>
               <v-card-title class="headline">Rename list</v-card-title>
               <v-card-text>
@@ -74,8 +74,7 @@
   </v-container>
 </template>
 <script>
-import apiService from '@/api/api.service.js'
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 import Navigation from '@/components/Navigation'
 const fetchInitialData = (store) => {
   return store.dispatch('listsModule/getLists')
@@ -88,7 +87,7 @@ export default {
     return {
       drawer: false,
       updateValid: false,
-      rename: false,
+      renameForm: false,
       updateList: {},
       nameRules: [
         v => !!v || 'Name is required',
@@ -100,6 +99,10 @@ export default {
     ...mapGetters('listsModule', ['lists'])
   },
   methods: {
+    ...mapActions('listsModule', {
+      delete: 'deleteList',
+      rename: 'renameList'
+    }),
     loadLists () {
       fetchInitialData(this.$store)
     },
@@ -111,29 +114,26 @@ export default {
         id: id,
         name: name
       }
-      this.rename = true
+      this.renameForm = true
     },
     deleteList (id) {
       this.$root.$confirm.open('Delete the list', 'Are you sure? This list and all related items will be deleted.', { color: 'red' }).then((confirm) => {
         if (confirm) {
-          apiService.deleteList(id).then(() => {
-            this.$store.dispatch('listsModule/getLists')
-          })
+          this.delete(id).catch(() => this.$root.$error.displayDefaultError())
         }
       })
     },
     cancelRename () {
       this.$refs.form.reset()
-      this.rename = false
+      this.renameForm = false
       this.updateList = {}
       this.updateValid = false
     },
     saveRename () {
       if (this.$refs.form.validate()) {
-        apiService.renameList(this.updateList).then(() => {
-          this.$store.dispatch('listsModule/getLists')
+        this.rename(this.updateList).then(() => {
           this.cancelRename()
-        })
+        }).catch(() => this.$root.$error.displayDefaultError())
       }
     }
   },

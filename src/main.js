@@ -7,6 +7,7 @@ import store from './store'
 import Vuetify from 'vuetify'
 import 'vuetify/dist/vuetify.min.css'
 import Confirm from '@/components/Confirm'
+import ErrorSnack from '@/components/Error'
 
 Vue.use(Vuetify, {
   theme: {
@@ -18,6 +19,7 @@ Vue.use(Vuetify, {
 Vue.config.productionTip = false
 
 Vue.component('confirm', Confirm)
+Vue.component('error', ErrorSnack)
 
 /* eslint-disable no-new */
 new Vue({
