@@ -3,6 +3,9 @@
     <router-view/>
     <confirm ref="confirm"></confirm>
     <error ref="error"></error>
+    <v-alert type="warning" :value="!isOnline" transition="fade-transition">
+      You're not currently connected to Internet. Some features are not available.
+    </v-alert>
   </v-app>
 </template>
 
@@ -18,5 +21,11 @@ export default {
 <style>
 .toolbar{
   z-index: 6;
+}
+
+.alert {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
 }
 </style>
