@@ -3,6 +3,7 @@ import Vuex from 'vuex'
 import itemsModule from './modules/items'
 import listsModule from './modules/lists'
 import apiService from '@/api/api.service.js'
+import router from '@/router'
 
 Vue.use(Vuex)
 
@@ -50,18 +51,15 @@ const store = new Vuex.Store({
   },
   mutations: {
     logout (state) {
-      if (typeof window !== 'undefined') {
-        localStorage.setItem('token', null)
-        localStorage.setItem('tokenExpiration', null)
-      }
-      // state.isAuthenticated = false
+      localStorage.removeItem('token')
+      localStorage.removeItem('tokenExpiration')
+      state.isAuthenticated = false
+      router.push({ name: 'Login' })
     },
     login (state, token) {
-      if (typeof window !== 'undefined') {
-        localStorage.setItem('token', token.auth_token)
-        localStorage.setItem('tokenExpiration', token.expires_in)
-      }
-      // state.isAuthenticated = true
+      localStorage.setItem('token', token.auth_token)
+      localStorage.setItem('tokenExpiration', new Date().getTime() / 1000 + token.expires_in)
+      state.isAuthenticated = true
     },
     setDrawer: (state, newVal) => {
       state.drawer = newVal
@@ -71,10 +69,12 @@ const store = new Vuex.Store({
 
 if (typeof window !== 'undefined') {
   document.addEventListener('DOMContentLoaded', function (event) {
-    let expiration = window.localStorage.getItem('tokenExpiration')
-    var unixTimestamp = new Date().getTime() / 1000
-    if (expiration === null || parseInt(expiration) - unixTimestamp < 0) {
-      store.dispatch('logout')
+    if (state.isAuthenticated) {
+      let expiration = localStorage.getItem('tokenExpiration')
+      var unixTimestamp = new Date().getTime() / 1000
+      if (!!expiration && parseInt(expiration) - unixTimestamp < 0) {
+        store.dispatch('logout')
+      }
     }
   })
 }
