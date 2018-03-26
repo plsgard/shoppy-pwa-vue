@@ -1,4 +1,5 @@
 import apiService from '@/api/api.service.js'
+
 const state = {
   lists: []
 }

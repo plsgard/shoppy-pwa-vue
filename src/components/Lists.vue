@@ -85,7 +85,6 @@ export default {
   },
   data () {
     return {
-      drawer: false,
       updateValid: false,
       renameForm: false,
       updateList: {},
@@ -103,9 +102,6 @@ export default {
       delete: 'deleteList',
       rename: 'renameList'
     }),
-    loadLists () {
-      fetchInitialData(this.$store)
-    },
     goToList (id) {
       this.$router.push({name: 'List', params: {id: id}})
     },
@@ -136,9 +132,6 @@ export default {
         }).catch(() => this.$root.$error.displayDefaultError())
       }
     }
-  },
-  created () {
-    this.loadLists()
   },
   components: {
     'app-nav': Navigation

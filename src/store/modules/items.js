@@ -1,4 +1,5 @@
 import apiService from '@/api/api.service.js'
+import router from '@/router'
 
 const state = {
   items: [],
@@ -6,12 +7,12 @@ const state = {
 }
 
 const getters = {
-  items: state => state.items,
-  routeParams: (state, allGetters, rootState) => rootState.route.params
+  items: state => state.items
 }
 
 const actions = {
-  getListItems ({ commit }, listId) {
+  getListItems ({ commit }) {
+    let listId = router.currentRoute.params.id
     if (navigator.onLine) {
       return apiService.getItems(listId).then(data => {
         commit('setListItems', { listId, items: data })
@@ -26,22 +27,22 @@ const actions = {
   },
   deleteItem ({ dispatch }, id) {
     return apiService.deleteItem(id).then(() => {
-      dispatch('getListItems', getters.routeParams.id)
+      dispatch('getListItems')
     })
   },
   renameItem ({ dispatch }, itemToUpdate) {
     return apiService.renameItem(itemToUpdate.id, itemToUpdate.updateName).then(() => {
-      dispatch('getListItems', getters.routeParams.id)
+      dispatch('getListItems')
     })
   },
   createItem ({ dispatch }, item) {
     return apiService.createItem(item).then(() => {
-      dispatch('getListItems', getters.routeParams.id)
+      dispatch('getListItems')
     })
   },
   pickItem ({ dispatch }, itemToPick) {
     return apiService.pickItem(itemToPick.id, itemToPick.toPick).then(() => {
-      dispatch('getListItems', getters.routeParams.id)
+      dispatch('getListItems')
     })
   }
 }

@@ -41,7 +41,7 @@
                 </v-list-tile>
                 <v-divider v-if="items.length"></v-divider>
                 <transition-group name="slide-x-transition">
-                <v-list-tile v-for="(item,index) in items" v-if="!item.picked" :key="item.id" v-touch="{
+                <v-list-tile v-for="item in items" v-if="!item.picked" :key="item.id" v-touch="{
       left: () => deleteItem(item.id)
     }">
                   <v-list-tile-action>
@@ -49,13 +49,13 @@
                   </v-list-tile-action>
                   <v-list-tile-content>
                     <!-- <v-list-tile-title v-text="item.name"></v-list-tile-title> -->
-                    <v-form v-on:submit.prevent ref="updateForm" style="width: 100%">
+                    <v-form v-on:submit.prevent :ref="'updateForm_'+item.id" style="width: 100%">
                       <v-text-field
                         :value="item.name"
                         single-line
                         solo
                         flat
-                        @change="update(item.id, $event, $refs.updateForm[index])"
+                        @change="update(item.id, $event, $refs['updateForm_'+item.id][0])"
                       ></v-text-field>
                     </v-form>
                   </v-list-tile-content>
@@ -97,25 +97,14 @@
 <script>
 import { mapGetters, mapActions } from 'vuex'
 import Navigation from '@/components/Navigation'
-const fetchInitialData = (store, route) => {
-  return store.dispatch('itemsModule/getListItems', route.params.id)
-}
-const fetchInitialList = (store) => {
-  return store.dispatch('listsModule/getLists')
-}
 export default {
   data () {
     return {
-      error: false,
-      errorMessage: '',
       name: '',
       valid: false,
       formEnable: false,
       list: {}
     }
-  },
-  asyncData (store, route) {
-    return fetchInitialData(store, route)
   },
   computed: {
     ...mapGetters('itemsModule', ['items']),
@@ -134,18 +123,12 @@ export default {
       delete: 'deleteItem',
       rename: 'renameItem',
       createNew: 'createItem',
-      pick: 'pickItem'
+      pick: 'pickItem',
+      getAll: 'getListItems'
     }),
-    loadList () {
-      fetchInitialList(this.$store).then(() => {
-        this.list = this.lists.find((el) => {
-          return el.id === this.listId
-        })
-      })
-    },
-    loadItems () {
-      fetchInitialData(this.$store, this.$route).catch(() => this.$root.$error.displayDefaultError())
-    },
+    ...mapActions('listsModule', {
+      getAllLists: 'getLists'
+    }),
     create () {
       if (this.$refs.form.validate() && this.name !== '') {
         if (this.name.length > 100) {
@@ -154,7 +137,6 @@ export default {
         } else {
           this.valid = true
           this.createNew({ listId: this.listId, name: this.name }).then(() => {
-            this.loadItems()
             this.initForm()
           }).catch(() => this.$root.$error.displayDefaultError())
         }
@@ -169,16 +151,15 @@ export default {
         } else {
           form.valid = true
           this.rename({id, updateName}).then(() => {
-            this.loadItems()
           }).catch(() => this.$root.$error.displayDefaultError())
         }
       } else {
+        this.$root.$error.displayError('You must provide an item name.')
         form.valid = false
       }
     },
     deleteItem (id) {
       this.delete(id).then(() => {
-        this.loadItems()
         this.initForm()
       }).catch(() => { this.$root.$error.displayDefaultError() })
     },
@@ -196,21 +177,26 @@ export default {
     },
     pickItem (id, toPick) {
       this.pick({id, toPick}).then(() => {
-        this.loadItems()
         this.initForm()
       }).catch(() => this.$root.$error.displayDefaultError())
     }
   },
   watch: {
     '$route' (to, from) {
-      this.loadList()
-      this.loadItems()
+      this.list = this.lists.find((el) => {
+        return el.id === this.listId
+      })
+      this.getAll(this.listId)
       this.initForm()
     }
   },
   created () {
-    this.loadList()
-    this.loadItems()
+    this.getAllLists().then(() => {
+      this.list = this.lists.find((el) => {
+        return el.id === this.listId
+      })
+    })
+    this.getAll(this.listId)
   },
   components: {
     'app-nav': Navigation
