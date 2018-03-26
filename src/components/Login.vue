@@ -59,12 +59,9 @@
   </v-container>
 </template>
 <script>
-  import { mapGetters, mapActions } from 'vuex'
+  import { mapGetters } from 'vuex'
 
   export default {
-    ...mapActions({
-      logout: 'logout'
-    }),
     data: () => ({
       valid: false,
       username: '',

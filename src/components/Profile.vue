@@ -15,22 +15,27 @@
 </v-container>
 </template>
 <script>
-import apiService from '@/api/api.service.js'
+import { mapGetters } from 'vuex'
+const fetchInitialData = (store) => {
+  return store.dispatch('profileModule/getProfile')
+}
 export default {
-  data () {
-    return {
-      profile: {}
-    }
+  asyncData (store) {
+    return fetchInitialData(store)
+  },
+  computed: {
+    ...mapGetters('profileModule', ['profile'])
   },
   methods: {
     logout () {
       this.$store.dispatch('logout')
+    },
+    loadProfile () {
+      fetchInitialData(this.$store)
     }
   },
   created () {
-    apiService.getProfile().then((profile) => {
-      this.profile = profile
-    })
+    this.loadProfile()
   }
 }
 </script>

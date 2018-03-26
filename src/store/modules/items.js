@@ -1,5 +1,6 @@
 import apiService from '@/api/api.service.js'
 import router from '@/router'
+import LocalItemService from '@/services/items'
 
 const state = {
   items: [],
@@ -13,14 +14,16 @@ const getters = {
 const actions = {
   getListItems ({ commit }) {
     let listId = router.currentRoute.params.id
+    let localItemService = new LocalItemService(listId)
+
     if (navigator.onLine) {
       return apiService.getItems(listId).then(data => {
         commit('setListItems', { listId, items: data })
-        localStorage.setItem('items_' + listId, JSON.stringify(data))
+        localItemService.setAll(data)
       })
     } else {
       return new Promise((resolve, reject) => {
-        commit('setListItems', JSON.parse(localStorage.getItem('items_' + listId)))
+        commit('setListItems', { listId, items: localItemService.getAll() })
         resolve()
       })
     }

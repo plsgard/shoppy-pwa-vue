@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import itemsModule from './modules/items'
 import listsModule from './modules/lists'
+import profileModule from './modules/profile'
 import apiService from '@/api/api.service.js'
 import router from '@/router'
 
@@ -17,7 +18,8 @@ const state = {
 const store = new Vuex.Store({
   modules: {
     itemsModule,
-    listsModule
+    listsModule,
+    profileModule
   },
   strict: debug,
   state,
@@ -51,8 +53,9 @@ const store = new Vuex.Store({
   },
   mutations: {
     logout (state) {
-      localStorage.removeItem('token')
-      localStorage.removeItem('tokenExpiration')
+      // localStorage.removeItem('token')
+      // localStorage.removeItem('tokenExpiration')
+      localStorage.clear()
       state.isAuthenticated = false
       router.push({ name: 'Login' })
     },

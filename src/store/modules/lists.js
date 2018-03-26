@@ -1,5 +1,7 @@
 import apiService from '@/api/api.service.js'
+import LocalListService from '@/services/lists'
 
+let localListService = new LocalListService()
 const state = {
   lists: []
 }
@@ -13,11 +15,11 @@ const actions = {
     if (navigator.onLine) {
       return apiService.getLists().then(data => {
         commit('setLists', data)
-        localStorage.setItem('lists', JSON.stringify(data))
+        localListService.setAll(data)
       })
     } else {
       return new Promise((resolve, reject) => {
-        commit('setLists', JSON.parse(localStorage.getItem('lists')))
+        commit('setLists', localListService.getAll())
         resolve()
       })
     }
