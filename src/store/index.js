@@ -36,14 +36,14 @@ const store = new Vuex.Store({
       context.commit('logout')
     },
     login (context, credentials) {
-      return new Promise((resolve) => {
+      return new Promise((resolve, reject) => {
         apiService.login(credentials)
           .then((data) => {
             context.commit('login', data)
             resolve()
           })
           .catch(() => {
-            window.alert('Could not login!')
+            reject(new Error('Unable to login'))
           })
       })
     },

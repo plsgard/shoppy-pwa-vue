@@ -83,7 +83,7 @@
               this.username = ''
               this.password = ''
               this.$router.push('/')
-            })
+            }).catch((error) => this.$root.$error.displayError(error.message))
         }
       },
       logout () {

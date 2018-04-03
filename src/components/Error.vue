@@ -2,6 +2,7 @@
   <v-snackbar
     :color="options.color"
     v-model="error"
+    :timeout="options.timeout"
   >
     {{ message }}
     <v-btn dark flat @click.native="error = false">OK</v-btn>
@@ -14,7 +15,8 @@ export default {
       error: false,
       message: null,
       options: {
-        color: 'error'
+        color: 'error',
+        timeout: 0
       }
     }
   },
