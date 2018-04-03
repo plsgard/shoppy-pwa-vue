@@ -10,10 +10,7 @@
             <v-toolbar dark color="secondary">
                 <v-toolbar-title>Welcome on Shoppy app</v-toolbar-title>
               </v-toolbar>
-            <v-card-text v-if="isAuthenticated">
-              <p class="subheading my-1">You're authenticated!</p>
-            </v-card-text>
-            <v-card-text v-else>
+            <v-card-text>
               <v-form v-model="valid" v-on:submit.prevent ref="form" lazy-validation id="login">
                 <v-text-field
                   prepend-icon="person"
@@ -48,6 +45,7 @@
               <v-btn color="primary"
                   @click.prevent="login"
                   :disabled="!valid"
+                  :loading="loading"
                 >
                   login
                 </v-btn>
@@ -65,6 +63,7 @@
     data: () => ({
       valid: false,
       username: '',
+      loading: false,
       emailRules: [
         v => !!v || 'E-mail is required',
         v => /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(v) || 'E-mail must be valid'
@@ -78,12 +77,13 @@
     methods: {
       login () {
         if (this.$refs.form.validate()) {
+          this.loading = true
           this.$store.dispatch('login', {username: this.username, password: this.password})
             .then(() => {
               this.username = ''
               this.password = ''
               this.$router.push('/')
-            }).catch((error) => this.$root.$error.displayError(error.message))
+            }).catch((error) => this.$root.$error.displayError(error.message)).finally(() => { this.loading = false })
         }
       },
       logout () {

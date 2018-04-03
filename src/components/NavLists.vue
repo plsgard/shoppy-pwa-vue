@@ -1,5 +1,6 @@
 <template>
-  <v-list subheader>
+<div>
+  <v-list subheader v-if="!loading">
     <v-subheader><v-flex xs6><h4>All lists</h4></v-flex>
           <v-flex xs6 class="text-xs-right"><v-btn class="mx-0" flat small color="primary" :to="{ name: 'Lists' }" exact>Manage</v-btn></v-flex></v-subheader>
     <v-list-tile v-for="list in lists" :key="list.id" :to="{ name: 'List', params: { id: list.id } }">
@@ -20,6 +21,8 @@
       </v-list-tile-content>
     </v-list-tile>
   </v-list>
+  <v-progress-circular v-if="loading" indeterminate color="secondary"></v-progress-circular>
+  </div>
 </template>
 <script>
 import { mapGetters } from 'vuex'
@@ -29,6 +32,11 @@ const fetchInitialData = (store) => {
 export default {
   asyncData (store) {
     return fetchInitialData(store)
+  },
+  data () {
+    return {
+      loading: false
+    }
   },
   computed: {
     ...mapGetters('listsModule', ['lists']),
@@ -40,7 +48,11 @@ export default {
     }
   },
   created () {
+    this.loading = true
     this.loadLists()
+  },
+  mounted () {
+    this.loading = false
   }
 }
 </script>

@@ -62,7 +62,11 @@ router.beforeEach((to, from, next) => {
       next()
     }
   } else {
-    next() // make sure to always call next()!
+    if (to.name === 'Login' && store.getters.isAuthenticated) {
+      next({ name: 'Lists' })
+    } else {
+      next() // make sure to always call next()!
+    }
   }
 })
 

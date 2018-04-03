@@ -45,8 +45,9 @@
             </v-list>
           </v-card>
           <v-card v-else>
-            <v-card-text>
-            <p class="subheading my-1"><v-icon>playlist_add</v-icon>  Create your first list using the "+" button in the top right corner.</p>
+            <v-progress-circular v-if="loading" indeterminate color="primary"></v-progress-circular>
+            <v-card-text v-else>
+              <p class="subheading my-1"><v-icon>playlist_add</v-icon>  Create your first list using the "+" button in the top right corner.</p>
             </v-card-text>
           </v-card>
           <v-dialog v-model="renameForm" persistent max-width="290" @keydown.esc="cancelRename">
@@ -112,6 +113,7 @@ export default {
   },
   data () {
     return {
+      loading: false,
       updateValid: false,
       renameForm: false,
       updateList: {},
@@ -183,7 +185,19 @@ export default {
           this.cancelDuplicate()
         }).catch(() => this.$root.$error.displayDefaultError())
       }
+    },
+    loadLists () {
+      fetchInitialData(this.$store)
     }
+  },
+  created () {
+    this.loading = true
+    this.loadLists()
+  },
+  mounted () {
+    this.$nextTick(function () {
+      this.loading = false
+    })
   },
   components: {
     'app-nav': Navigation

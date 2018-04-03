@@ -40,6 +40,11 @@
                   </v-list-tile-content>
                 </v-list-tile>
                 <v-divider v-if="items.length"></v-divider>
+                <v-list-tile v-if="loading">
+                  <v-list-tile-content>
+                <v-progress-circular indeterminate color="primary"></v-progress-circular>
+                  </v-list-tile-content>
+                </v-list-tile>
                 <transition-group name="slide-x-transition">
                 <v-list-tile v-for="item in items" v-if="!item.picked" :key="item.id" v-touch="{
       left: () => deleteItem(item.id)
@@ -101,6 +106,7 @@ export default {
   data () {
     return {
       name: '',
+      loading: false,
       valid: false,
       formEnable: false,
       list: {}
@@ -183,20 +189,26 @@ export default {
   },
   watch: {
     '$route' (to, from) {
+      this.loading = true
       this.list = this.lists.find((el) => {
         return el.id === this.listId
       })
-      this.getAll(this.listId)
+      this.getAll(this.listId).finally(() => {
+        this.loading = false
+      })
       this.initForm()
     }
   },
   created () {
+    this.loading = true
     this.getAllLists().then(() => {
       this.list = this.lists.find((el) => {
         return el.id === this.listId
       })
     })
-    this.getAll(this.listId)
+    this.getAll(this.listId).finally(() => {
+      this.loading = false
+    })
   },
   components: {
     'app-nav': Navigation
