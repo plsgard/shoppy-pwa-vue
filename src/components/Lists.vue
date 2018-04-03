@@ -21,6 +21,7 @@
               <v-list-tile v-for="list in lists" :key="list.id">
                 <v-list-tile-content @click="goToList(list.id)">
                   <v-list-tile-title v-text="list.name"></v-list-tile-title>
+                  <v-list-tile-sub-title v-if="list.userId != profile.id">shared by {{ list.user.firstName }} {{ list.user.lastName }}</v-list-tile-sub-title>
                 </v-list-tile-content>
                 <v-list-tile-action>
                   <v-menu bottom left>
@@ -30,6 +31,9 @@
                     <v-list>
                       <v-list-tile @click="renameList(list.name, list.id)">
                         <v-list-tile-title>Rename</v-list-tile-title>
+                      </v-list-tile>
+                      <v-list-tile @click="duplicateList(list.id)">
+                        <v-list-tile-title>Duplicate</v-list-tile-title>
                       </v-list-tile>
                       <v-list-tile @click="deleteList(list.id)">
                         <v-list-tile-title>Delete</v-list-tile-title>
@@ -68,6 +72,29 @@
               </v-card-actions>
             </v-card>
           </v-dialog>
+          <v-dialog v-model="duplicateForm" persistent max-width="290" @keydown.esc="cancelDuplicate">
+            <v-card>
+              <v-card-title class="headline">Duplicate list</v-card-title>
+              <v-card-text>
+                <v-form v-model="duplicateValid" v-on:submit.prevent ref="duplicateForm" lazy-validation>
+                    <v-text-field
+                      label="Name"
+                      v-model.lazy.trim="duplicateObjectList.name"
+                      :counter="50"
+                      :rules="nameRules"
+                      required
+                      @keyup.enter="saveDuplicate"
+                      autofocus
+                    ></v-text-field>
+                  </v-form>
+              </v-card-text>
+              <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn color="primary" flat @click.native="cancelDuplicate">Cancel</v-btn>
+                <v-btn color="primary" flat @click.native="saveDuplicate">OK</v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
         </v-flex>
       </v-layout>
     </v-content>
@@ -88,6 +115,9 @@ export default {
       updateValid: false,
       renameForm: false,
       updateList: {},
+      duplicateValid: false,
+      duplicateForm: false,
+      duplicateObjectList: {},
       nameRules: [
         v => !!v || 'Name is required',
         v => (v && v.length <= 50) || 'Name must be less than 50 characters'
@@ -95,12 +125,14 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('listsModule', ['lists'])
+    ...mapGetters('listsModule', ['lists']),
+    ...mapGetters('profileModule', ['profile'])
   },
   methods: {
     ...mapActions('listsModule', {
       delete: 'deleteList',
-      rename: 'renameList'
+      rename: 'renameList',
+      duplicate: 'duplicateList'
     }),
     goToList (id) {
       this.$router.push({name: 'List', params: {id: id}})
@@ -111,6 +143,13 @@ export default {
         name: name
       }
       this.renameForm = true
+    },
+    duplicateList (id) {
+      this.duplicateObjectList = {
+        existingListId: id,
+        name: ''
+      }
+      this.duplicateForm = true
     },
     deleteList (id) {
       this.$root.$confirm.open('Delete the list', 'Are you sure? This list and all related items will be deleted.', { color: 'red' }).then((confirm) => {
@@ -129,6 +168,19 @@ export default {
       if (this.$refs.form.validate()) {
         this.rename(this.updateList).then(() => {
           this.cancelRename()
+        }).catch(() => this.$root.$error.displayDefaultError())
+      }
+    },
+    cancelDuplicate () {
+      this.$refs.duplicateForm.reset()
+      this.duplicateForm = false
+      this.duplicateObjectList = {}
+      this.duplicateValid = false
+    },
+    saveDuplicate () {
+      if (this.$refs.duplicateForm.validate()) {
+        this.duplicate(this.duplicateObjectList).then(() => {
+          this.cancelDuplicate()
         }).catch(() => this.$root.$error.displayDefaultError())
       }
     }

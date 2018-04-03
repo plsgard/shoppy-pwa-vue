@@ -33,6 +33,11 @@ const actions = {
     return apiService.renameList(listToUpdate).then(() => {
       dispatch('getLists')
     })
+  },
+  duplicateList ({ dispatch }, listToDuplicate) {
+    return apiService.duplicateList(listToDuplicate).then(() => {
+      dispatch('getLists')
+    })
   }
 }
 

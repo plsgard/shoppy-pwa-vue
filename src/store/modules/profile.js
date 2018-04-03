@@ -3,11 +3,12 @@ import LocalProfileService from '@/services/profile'
 
 let localProfileService = new LocalProfileService()
 const state = {
-  profile: {}
+  profile: localStorage.getItem('profile')
 }
 
 const getters = {
-  profile: state => state.profile
+  profile: state => state.profile,
+  currentUserId: state => state.profile.id
 }
 
 const actions = {

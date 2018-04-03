@@ -31,6 +31,14 @@ const appService = {
         })
     })
   },
+  duplicateList (duplicate) {
+    return new Promise((resolve) => {
+      axios.post('/lists/duplicate', duplicate)
+        .then(response => {
+          resolve(response.data)
+        })
+    })
+  },
   getProfile () {
     return new Promise((resolve) => {
       axios.post('/accounts/me')

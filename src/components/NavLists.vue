@@ -8,6 +8,7 @@
       </v-list-tile-action>
       <v-list-tile-content>
         <v-list-tile-title v-text="list.name"></v-list-tile-title>
+        <v-list-tile-sub-title v-if="list.userId != profile.id">shared by {{ list.user.firstName }} {{ list.user.lastName }}</v-list-tile-sub-title>
       </v-list-tile-content>
     </v-list-tile>
     <v-list-tile :to="{ name: 'NewList' }">
@@ -30,7 +31,8 @@ export default {
     return fetchInitialData(store)
   },
   computed: {
-    ...mapGetters('listsModule', ['lists'])
+    ...mapGetters('listsModule', ['lists']),
+    ...mapGetters('profileModule', ['profile'])
   },
   methods: {
     loadLists () {
