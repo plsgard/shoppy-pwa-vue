@@ -25,7 +25,7 @@ const appService = {
   },
   getLists () {
     return new Promise((resolve) => {
-      axios.get('/lists')
+      axios.get('/lists?LoadShares=true')
         .then(response => {
           resolve(response.data)
         })
