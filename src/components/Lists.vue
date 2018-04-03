@@ -35,6 +35,9 @@
                       <v-list-tile @click="duplicateList(list.id)">
                         <v-list-tile-title>Duplicate</v-list-tile-title>
                       </v-list-tile>
+                      <v-list-tile @click="shareList(list.id)">
+                        <v-list-tile-title>Share</v-list-tile-title>
+                      </v-list-tile>
                       <v-list-tile @click="deleteList(list.id)">
                         <v-list-tile-title>Delete</v-list-tile-title>
                       </v-list-tile>
@@ -96,6 +99,29 @@
               </v-card-actions>
             </v-card>
           </v-dialog>
+          <v-dialog v-model="shareForm" persistent max-width="290" @keydown.esc="cancelShare">
+            <v-card>
+              <v-card-title class="headline">Share list</v-card-title>
+              <v-card-text>
+                <v-form v-model="shareValid" v-on:submit.prevent ref="shareForm" lazy-validation>
+                    <v-text-field
+                    prepend-icon="person"
+                      label="E-mail"
+                      v-model.lazy.trim="shareObjectList.userName"
+                      :rules="emailRules"
+                      required
+                      @keyup.enter="saveShare"
+                      autofocus
+                    ></v-text-field>
+                  </v-form>
+              </v-card-text>
+              <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn color="primary" flat @click.native="cancelShare">Cancel</v-btn>
+                <v-btn color="primary" flat @click.native="saveShare">OK</v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
         </v-flex>
       </v-layout>
     </v-content>
@@ -120,9 +146,16 @@ export default {
       duplicateValid: false,
       duplicateForm: false,
       duplicateObjectList: {},
+      shareValid: false,
+      shareForm: false,
+      shareObjectList: {},
       nameRules: [
         v => !!v || 'Name is required',
         v => (v && v.length <= 50) || 'Name must be less than 50 characters'
+      ],
+      emailRules: [
+        v => !!v || 'E-mail is required',
+        v => /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(v) || 'E-mail must be valid'
       ]
     }
   },
@@ -134,7 +167,8 @@ export default {
     ...mapActions('listsModule', {
       delete: 'deleteList',
       rename: 'renameList',
-      duplicate: 'duplicateList'
+      duplicate: 'duplicateList',
+      share: 'shareList'
     }),
     goToList (id) {
       this.$router.push({name: 'List', params: {id: id}})
@@ -152,6 +186,13 @@ export default {
         name: ''
       }
       this.duplicateForm = true
+    },
+    shareList (id) {
+      this.shareObjectList = {
+        listId: id,
+        userName: ''
+      }
+      this.shareForm = true
     },
     deleteList (id) {
       this.$root.$confirm.open('Delete the list', 'Are you sure? This list and all related items will be deleted.', { color: 'red' }).then((confirm) => {
@@ -183,6 +224,19 @@ export default {
       if (this.$refs.duplicateForm.validate()) {
         this.duplicate(this.duplicateObjectList).then(() => {
           this.cancelDuplicate()
+        }).catch(() => this.$root.$error.displayDefaultError())
+      }
+    },
+    cancelShare () {
+      this.$refs.shareForm.reset()
+      this.shareForm = false
+      this.shareObjectList = {}
+      this.shareValid = false
+    },
+    saveShare () {
+      if (this.$refs.shareForm.validate()) {
+        this.share(this.shareObjectList).then(() => {
+          this.cancelShare()
         }).catch(() => this.$root.$error.displayDefaultError())
       }
     },

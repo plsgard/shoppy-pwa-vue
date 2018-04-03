@@ -39,6 +39,14 @@ const appService = {
         })
     })
   },
+  shareList (share) {
+    return new Promise((resolve) => {
+      axios.post('/lists/share', share)
+        .then(response => {
+          resolve(response.data)
+        })
+    })
+  },
   getProfile () {
     return new Promise((resolve) => {
       axios.post('/accounts/me')

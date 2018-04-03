@@ -38,6 +38,11 @@ const actions = {
     return apiService.duplicateList(listToDuplicate).then(() => {
       dispatch('getLists')
     })
+  },
+  shareList ({ dispatch }, listToShare) {
+    return apiService.shareList(listToShare).then(() => {
+      dispatch('getLists')
+    })
   }
 }
 
