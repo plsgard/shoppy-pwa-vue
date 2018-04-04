@@ -40,10 +40,12 @@ const appService = {
     })
   },
   shareList (share) {
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       axios.post('/lists/share', share)
         .then(response => {
           resolve(response.data)
+        }).catch(response => {
+          reject(response.status)
         })
     })
   },

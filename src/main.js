@@ -7,7 +7,7 @@ import store from './store'
 import Vuetify from 'vuetify'
 import 'vuetify/dist/vuetify.min.css'
 import Confirm from '@/components/Confirm'
-import ErrorSnack from '@/components/Error'
+import NotySnack from '@/components/Noty'
 import VueOnlinePlugin from '@/plugins/online'
 
 Vue.use(Vuetify, {
@@ -20,7 +20,7 @@ Vue.use(Vuetify, {
 Vue.config.productionTip = false
 
 Vue.component('confirm', Confirm)
-Vue.component('error', ErrorSnack)
+Vue.component('noty', NotySnack)
 
 Vue.use(VueOnlinePlugin)
 

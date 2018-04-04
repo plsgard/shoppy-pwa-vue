@@ -44,7 +44,9 @@ export default {
   },
   methods: {
     loadLists () {
-      fetchInitialData(this.$store)
+      fetchInitialData(this.$store).finally(() => {
+        this.loading = false
+      })
     }
   },
   created () {

@@ -9,6 +9,9 @@
       <v-toolbar-side-icon @click.stop="$refs.navBar.toggleDrawer()"></v-toolbar-side-icon>
       <v-toolbar-title v-text="list.name"></v-toolbar-title>
       <v-spacer></v-spacer>
+      <v-btn flat large @click.stop="shareList(list.id)">
+        <v-icon>person_add</v-icon>
+      </v-btn>
       <v-btn id="createItemBtn" flat large @click.stop="create" v-show="formEnable" :disabled="this.name === ''">
         OK
       </v-btn>
@@ -93,6 +96,29 @@
                 </v-list-tile>
                 </v-list-group>
               </v-list>
+              <v-dialog v-model="shareForm" persistent max-width="290" @keydown.esc="cancelShare">
+            <v-card>
+              <v-card-title class="headline">Share list to another user</v-card-title>
+              <v-card-text>
+                <v-form v-model="shareValid" v-on:submit.prevent ref="shareForm" lazy-validation>
+                    <v-text-field
+                    prepend-icon="person"
+                      label="E-mail"
+                      v-model.lazy.trim="shareObjectList.userName"
+                      :rules="emailRules"
+                      required
+                      @keyup.enter="saveShare"
+                      autofocus
+                    ></v-text-field>
+                  </v-form>
+              </v-card-text>
+              <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn color="primary" flat @click.native="cancelShare">Cancel</v-btn>
+                <v-btn color="primary" flat @click.native="saveShare">OK</v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
             </v-card>
           </v-flex>
       </v-layout>
@@ -109,7 +135,14 @@ export default {
       loading: false,
       valid: false,
       formEnable: false,
-      list: {}
+      shareValid: false,
+      shareForm: false,
+      shareObjectList: {},
+      list: {},
+      emailRules: [
+        v => !!v || 'E-mail is required',
+        v => /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(v) || 'E-mail must be valid'
+      ]
     }
   },
   computed: {
@@ -133,18 +166,19 @@ export default {
       getAll: 'getListItems'
     }),
     ...mapActions('listsModule', {
-      getAllLists: 'getLists'
+      getAllLists: 'getLists',
+      share: 'shareList'
     }),
     create () {
       if (this.$refs.form.validate() && this.name !== '') {
         if (this.name.length > 100) {
           this.valid = false
-          this.$root.$error.displayError('Item name must be less than 100 characters')
+          this.$root.$noty.displayError('Item name must be less than 100 characters')
         } else {
           this.valid = true
           this.createNew({ listId: this.listId, name: this.name }).then(() => {
             this.initForm()
-          }).catch(() => this.$root.$error.displayDefaultError())
+          }).catch(() => this.$root.$noty.displayDefaultError())
         }
       }
     },
@@ -153,21 +187,21 @@ export default {
         updateName = updateName.trim()
         if (updateName.length > 100) {
           form.valid = false
-          this.$root.$error.displayError('Item name must be less than 100 characters')
+          this.$root.$noty.displayError('Item name must be less than 100 characters')
         } else {
           form.valid = true
           this.rename({id, updateName}).then(() => {
-          }).catch(() => this.$root.$error.displayDefaultError())
+          }).catch(() => this.$root.$noty.displayDefaultError())
         }
       } else {
-        this.$root.$error.displayError('You must provide an item name.')
+        this.$root.$noty.displayError('You must provide an item name.')
         form.valid = false
       }
     },
     deleteItem (id) {
       this.delete(id).then(() => {
         this.initForm()
-      }).catch(() => { this.$root.$error.displayDefaultError() })
+      }).catch(() => { this.$root.$noty.displayDefaultError() })
     },
     unblur (event) {
       if (event.relatedTarget === null || event.relatedTarget.id !== 'createItemBtn') {
@@ -184,7 +218,28 @@ export default {
     pickItem (id, toPick) {
       this.pick({id, toPick}).then(() => {
         this.initForm()
-      }).catch(() => this.$root.$error.displayDefaultError())
+      }).catch(() => this.$root.$noty.displayDefaultError())
+    },
+    shareList (id) {
+      this.shareObjectList = {
+        listId: id,
+        userName: ''
+      }
+      this.shareForm = true
+    },
+    cancelShare () {
+      this.$refs.shareForm.reset()
+      this.shareForm = false
+      this.shareObjectList = {}
+      this.shareValid = false
+    },
+    saveShare () {
+      if (this.$refs.shareForm.validate()) {
+        this.share(this.shareObjectList).then(() => {
+          this.cancelShare()
+          this.$root.$noty.displaySuccess('The list has been successfully shared.')
+        }).catch(() => this.$root.$noty.displayDefaultError())
+      }
     }
   },
   watch: {

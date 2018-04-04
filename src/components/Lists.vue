@@ -35,7 +35,7 @@
                       <v-list-tile @click="duplicateList(list.id)">
                         <v-list-tile-title>Duplicate</v-list-tile-title>
                       </v-list-tile>
-                      <v-list-tile @click="shareList(list.id)">
+                      <v-list-tile v-if="list.userId == profile.id" @click="shareList(list.id)">
                         <v-list-tile-title>Share</v-list-tile-title>
                       </v-list-tile>
                       <v-list-tile @click="deleteList(list.id)">
@@ -101,7 +101,7 @@
           </v-dialog>
           <v-dialog v-model="shareForm" persistent max-width="290" @keydown.esc="cancelShare">
             <v-card>
-              <v-card-title class="headline">Share list</v-card-title>
+              <v-card-title class="headline">Share list to another user</v-card-title>
               <v-card-text>
                 <v-form v-model="shareValid" v-on:submit.prevent ref="shareForm" lazy-validation>
                     <v-text-field
@@ -197,7 +197,7 @@ export default {
     deleteList (id) {
       this.$root.$confirm.open('Delete the list', 'Are you sure? This list and all related items will be deleted.', { color: 'red' }).then((confirm) => {
         if (confirm) {
-          this.delete(id).catch(() => this.$root.$error.displayDefaultError())
+          this.delete(id).catch(() => this.$root.$noty.displayDefaultError())
         }
       })
     },
@@ -211,7 +211,8 @@ export default {
       if (this.$refs.form.validate()) {
         this.rename(this.updateList).then(() => {
           this.cancelRename()
-        }).catch(() => this.$root.$error.displayDefaultError())
+          this.$root.$noty.displaySuccess('The list has been successfully shared.')
+        }).catch(() => this.$root.$noty.displayDefaultError())
       }
     },
     cancelDuplicate () {
@@ -224,7 +225,7 @@ export default {
       if (this.$refs.duplicateForm.validate()) {
         this.duplicate(this.duplicateObjectList).then(() => {
           this.cancelDuplicate()
-        }).catch(() => this.$root.$error.displayDefaultError())
+        }).catch(() => this.$root.$noty.displayDefaultError())
       }
     },
     cancelShare () {
@@ -237,7 +238,7 @@ export default {
       if (this.$refs.shareForm.validate()) {
         this.share(this.shareObjectList).then(() => {
           this.cancelShare()
-        }).catch(() => this.$root.$error.displayDefaultError())
+        }).catch(() => this.$root.$noty.displayDefaultError())
       }
     },
     loadLists () {
